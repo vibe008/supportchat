@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "ChatSession" ALTER COLUMN "updatedAt" SET DEFAULT CURRENT_TIMESTAMP;

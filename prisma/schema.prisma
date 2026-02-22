@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ChatSession {
+  id         String     @id @default(uuid())
+  userId     String
+  agentId    String?
+  ticketId   String?
+  status ChatStatus @default(OPEN)
+  assignedAt DateTime?
+  messages   Message[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime?  @default(now()) // Optional with default
+  chatQueue  ChatQueue?
+  userName   String?   
+  userEmail  String?  
+  userCode   String?   // Add this
+  userType   String?   @default("user") // Add this
+}
+
+model Message {
+  id            String      @id @default(uuid())
+  chatSessionId String
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
+  senderId      String
+  senderType    String
+  message       String
+  type          String      @default("TEXT")
+  status        String      @default("SENT")
+  createdAt     DateTime    @default(now())
+}
+
+model StaffPresence {
+  id        String   @id @default(uuid())
+  staffId   String   @unique
+  email     String
+  name      String
+  socketId  String?
+  status    String   @default("OFFLINE")
+  lastSeen  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      String
+  permissions     String[]
+  isSuperAdmin    Boolean  @default(false)
+  departmentId    String?
+  subDepartmentId String?
+
+  @@index([status])
+  @@index([staffId])
+}
+
+model ChatQueue {
+  id            String      @id @default(uuid())
+  chatSessionId String      @unique
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
+  priority      Int         @default(0)
+  assignedTo    String?
+  status        String      @default("WAITING")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+enum ChatStatus {
+  OPEN
+  ASSIGNED          
+  TICKET_CREATED
+  IN_PROGRESS
+  CLOSED
+}
