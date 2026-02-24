@@ -9,12 +9,13 @@ const server = http.createServer(app);
 
 // Middleware
 app.use(cors({
-  origin: ["*"],
-  // origin: [
-  //   "http://localhost:3000",
-  //   "http://localhost:5173",
-  //   "https://staffmanagement-superadmin.vercel.app"
-  // ],
+  // origin: ["*"],
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://staffmanagement-superadmin.vercel.app",
+    "https://www.mysmartpg.com"
+  ],
   credentials: true
 }));
 app.use(express.json());
