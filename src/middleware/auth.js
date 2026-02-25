@@ -19,9 +19,10 @@ exports.verifySocket = (socket, next) => {
         id: decoded.userId,
         type: decoded.type || "user",
         role: "USER",
-        userName:decoded?.name,
-        userEmail:decoded?.email,
-        code : decoded?.code
+        userName: decoded?.name,
+        userEmail: decoded?.email || null,
+        code: decoded?.code || null,
+        isGuest: decoded?.isGuest || false
       };
     } else if (decoded.id) {
       // Staff/Admin
